@@ -1,0 +1,276 @@
+# 默认配置文件
+# 自动驾驶数据闭环系统配置
+
+# 车端配置
+onboard:
+  # Trigger配置
+  triggers:
+    enabled: true
+    max_triggers: 100
+    evaluation_interval: 0.1  # 评估间隔（秒）
+
+  # 体感指标配置
+  metrics:
+    enabled: true
+    history_size: 1000
+    update_interval: 0.1  # 更新间隔（秒）
+
+  # 数据日志配置
+  logger:
+    enabled: true
+    max_queue_size: 1000
+    upload_workers: 4
+    log_levels:
+      micro:
+        before_window: 5.0  # 前置窗口（秒）
+        after_window: 5.0   # 后置窗口（秒）
+      mini:
+        before_window: 30.0
+        after_window: 30.0
+      full:
+        enabled: false  # full log需要手动触发
+
+  # 沙箱配置
+  sandbox:
+    enabled: true
+    max_sandboxes: 10
+    default_max_duration: 3600  # 默认最大运行时长（秒）
+    time_windows:
+      - start: "22:00"
+        end: "06:00"
+
+# 云端配置
+cloud:
+  # 多模态数据挖掘配置
+  mining:
+    enabled: true
+    max_tasks: 50
+    default_max_results: 10000
+    default_strategy: "hybrid"  # trigger_based, vector_search, rule_filter, event_sequence, hybrid
+    
+    # 基础层：自动化结构化提取
+    auto_labeling:
+      enabled: true
+      model_name: "teacher_model_v2"
+      model_path: "./models/teacher_model"
+      device: "cuda:0"
+      batch_size: 8
+      confidence_threshold: 0.5
+      enable_lanes: true
+      enable_traffic_lights: true
+      output_format: "parquet"  # json, parquet
+    
+    # 进阶层：向量化检索
+    vector_indexing:
+      enabled: true
+      model_type: "clip"  # clip, blip2, custom
+      model_name: "openai/clip-vit-base-patch32"
+      embedding_dim: 512
+      key_frame_interval: 1.0  # 关键帧间隔（秒）
+      max_key_frames: 10
+      enable_caption: true
+      caption_model: "gpt-4-vision-preview"
+      similarity_threshold: 0.7
+      top_k: 100
+    
+    # 高级层：场景图构建
+    scene_graph:
+      enabled: false
+      max_distance: 50.0  # 最大距离（米）
+      occlusion_threshold: 0.5
+      relation_confidence_threshold: 0.7
+      enable_spatial_relations: true
+      enable_temporal_relations: true
+    
+    # 终极层：4D重建
+    reconstruction:
+      enabled: false
+      method: "gaussian_splatting"  # nerf, gaussian_splatting, traditional_sfm
+      resolution: [1920, 1080]
+      max_iterations: 30000
+      output_dir: "./reconstructions"
+
+  # LLM诊断配置
+  diagnosis:
+    enabled: true
+    llm_model: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2000
+    weak_supervision:
+      enabled: true
+      confidence_threshold: 0.7
+    online_learning:
+      enabled: true
+
+  # 问题分发配置
+  distribution:
+    enabled: true
+    max_teams: 20
+    max_concurrent_tasks_per_team: 5
+    auto_distribute: true
+    distribute_interval: 60  # 分发间隔（秒）
+
+  # 数据标注配置
+  annotation:
+    enabled: true
+    max_tasks: 1000
+    label_types:
+      - mining
+      - ground_truth
+    validation_enabled: true
+
+# 仿真配置
+simulation:
+  # 场景生成配置
+  generation:
+    enabled: true
+    max_scenes: 1000
+    default_duration: 30.0  # 默认场景时长（秒）
+    output_dir: "./simulations/scenes"
+
+  # 模型训练配置
+  training:
+    enabled: true
+    max_trainings: 50
+    output_dir: "./models"
+    default_epochs: 100
+    default_batch_size: 32
+    default_learning_rate: 0.001
+    use_real_data: true
+    use_generated_data: false
+
+  # 模型评测配置
+  evaluation:
+    enabled: true
+    max_evaluations: 100
+    use_real_data_only: true
+    default_metrics:
+      - accuracy
+      - precision
+      - recall
+      - f1_score
+      - mae
+      - mse
+      - rmse
+
+# 系统配置
+system:
+  # 日志配置
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    file: "./logs/system.log"
+    max_size: 10485760  # 10MB
+    backup_count: 5
+
+  # 监控配置
+  monitoring:
+    enabled: true
+    metrics_port: 9090
+    update_interval: 10  # 更新间隔（秒）
+
+  # 存储配置
+  storage:
+    data_dir: "./data"
+    model_dir: "./models"
+    log_dir: "./logs"
+    temp_dir: "./temp"
+
+  # 性能配置
+  performance:
+    max_workers: 8
+    max_queue_size: 10000
+    timeout: 300  # 超时时间（秒）
+
+# 团队配置
+teams:
+  perception:
+    name: "感知团队"
+    type: "perception"
+    members: []
+    max_concurrent_tasks: 5
+    contact: ""
+
+  prediction:
+    name: "预测团队"
+    type: "prediction"
+    members: []
+    max_concurrent_tasks: 3
+    contact: ""
+
+  planning:
+    name: "规划团队"
+    type: "planning"
+    members: []
+    max_concurrent_tasks: 5
+    contact: ""
+
+  control:
+    name: "控制团队"
+    type: "control"
+    members: []
+    max_concurrent_tasks: 3
+    contact: ""
+
+  sensor:
+    name: "传感器团队"
+    type: "sensor"
+    members: []
+    max_concurrent_tasks: 2
+    contact: ""
+
+  algorithm:
+    name: "算法团队"
+    type: "algorithm"
+    members: []
+    max_concurrent_tasks: 5
+    contact: ""
+
+# 分发规则配置
+distribution_rules:
+  - rule_id: "rule_001"
+    name: "感知问题分发"
+    problem_type: "perception"
+    problem_severity: "critical"
+    team_type: "perception"
+    priority_mapping:
+      critical: "critical"
+      high: "high"
+      medium: "medium"
+      low: "low"
+    enabled: true
+
+  - rule_id: "rule_002"
+    name: "预测问题分发"
+    problem_type: "prediction"
+    problem_severity: "high"
+    team_type: "prediction"
+    enabled: true
+
+  - rule_id: "rule_003"
+    name: "规划问题分发"
+    problem_type: "planning"
+    problem_severity: "critical"
+    team_type: "planning"
+    enabled: true
+
+  - rule_id: "rule_004"
+    name: "控制问题分发"
+    problem_type: "control"
+    problem_severity: "high"
+    team_type: "control"
+    enabled: true
+
+  - rule_id: "rule_005"
+    name: "传感器问题分发"
+    problem_type: "sensor"
+    problem_severity: "critical"
+    team_type: "sensor"
+    enabled: true
+
+  - rule_id: "rule_006"
+    name: "算法问题分发"
+    problem_type: "algorithm"
+    problem_severity: "high"
+    team_type: "algorithm"
+    enabled: true
