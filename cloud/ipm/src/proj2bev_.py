@@ -68,30 +68,8 @@ class BevProjector:
             self.distortions[name] = dist
             trans = PointsTrans(intrinsic, extrinsic, image_shape)
             self.trans_dict[name] = trans
-
-
+    
     def run(self, img_list, cam_name_list, det_results):
-        bev_img = np.zeros((self.height, self.width, 4), dtype=np.uint8)
-        for img_path, cam_name in zip(img_list, cam_name_list):
-            rgb_img = load_image(img_path)
-            if rgb_img is None:
-                continue
-            rgb_img = self.distortions[cam_name].anti(rgb_img)
-
-            y_coors, x_coors = np.mgrid[0:rgb_img.shape[0], 0:rgb_img.shape[1]]
-            coords = np.dstack((x_coors, y_coors)).reshape(-1, 2)
-            bev_coords, coords = self.trans_dict[cam_name].pixel_to_bev(coords)
-            bev_img = self.trans_bev_to_img(bev_coords, coords, rgb_img, cam_name, bev_img)
-        for i in range(len(det_results)):
-            bev_img = self.trans_bev_to_img_(det_results[i], (255, 0, 0), bev_img=bev_img)
-            results = det_results[i]
-            # draw label
-            for pts in results:
-                bev_coords, _ = self.trans_dict[cam_name_list[i]].pixel_to_bev(np.array(pts))
-                self.trans_bev_to_img_(bev_coords, alpha=1.0, bev_img=bev_img, color=np.array(self.color_list[i]))
-        # bev_img = self.draw_coor_sys(bev_img)
-        bev_img = self.draw_grid(bev_img)
-        return bev_img    def run(self, img_list, cam_name_list, det_results):
         bev_img = np.zeros((self.height, self.width, 4), dtype=np.uint8)
         for img_path, cam_name in zip(img_list, cam_name_list):
             rgb_img = load_image(img_path)
@@ -195,33 +173,33 @@ class BevProjector:
 
     def get_pix_rgb(self, img, x, y):
         """
-            ____~B~]~P| ~G(x,y)~[~L~O~L__~@~O~R~@
-            ~O~B~U~Z
-                img: ~S~E~[~C~O(numpy~U~D~LH~WW~WC)
-                x: __~Bx~]~P| ~G(____~V~P~Q)
-                y: __~By~]~P| ~G(~^~B~[~V~P~Q)
-            ~T~[~^~Z
-                interpolated: ~O~R~@~P~N~Z~DRGB~@(3~E~C| ~U~D)
+            双线性插值获取像素RGB值
+            参数:
+                img: 图像数组(numpy格式)
+                x: 像素x坐标(列)
+                y: 像素y坐标(行)
+            返回:
+                interpolated: 插值后的RGB值(3通道)
             """
-        # ~N~O~V~[~[__~B~Q~U~U~]~P| ~G
+        # 获取四个邻近整数坐标
         x0, y0 = int(np.floor(x)), int(np.floor(y))
         x1, y1 = min(x0 + 1, img.shape[1] - 1), min(y0 + 1, img.shape[0] - 1)
 
 
-        # __~W~A~O__~G~O
+        # 计算权重
         dx, dy = x - x0, y - y0
 
-        # __~U~L~@~_
+        # 边界检查
         x0 = max(0, x0)
         y0 = max(0, y0)
 
-        # ~N~O~V~[~[__~R~B~Z~DRGB~@
+        # 获取四个邻近点的RGB值
         top_left = img[y0, x0]
         top_right = img[y0, x1]
         bottom_left = img[y1, x0]
         bottom_right = img[y1, x1]
 
-        # ~O~L__~@~O~R~@__~W
+        # 双线性插值计算
         interpolated = (
                 (1 - dx) * (1 - dy) * top_left +
                 dx * (1 - dy) * top_right +
@@ -234,45 +212,45 @@ class BevProjector:
 
     def trans_bev_to_img(self, bev_coords, img_coords, rgb_img, cam_name, bev_img=None):
         """
-        ~Fbev~]~P| ~G__~M__~_~^~[~]~P| ~G~L__~X~HRGB~[~C~O~@~B
+        将BEV坐标下的点投影回图像RGB通道
 
         Args:
-            bev_coords (np.ndarray): bev~B~Q~]~P| ~G~L__~J__(N, 2)~L~E__N__~B~Z~D~U~G~O~L__~@~H~W__x~]~P| ~G~L__~L~H~W__y~]~P| ~G~@~B
-            img_coords (np.ndarray): bev~B__~T~Z~D~[~C~O~]~P| ~G~L__~J__(N, 2)~L~E__N__~B~Z~D~U~G~O~L__~@~H~W__u~]~P| ~G~L__~L~H~W__v~]~P| ~G~@~B
-            rgb_img (np.ndarray): ~B__~T~Z~DRGB~[~C~O~L__~J__(height, width, 3)~L~E__height__~[~C~O~X__~Lwidth__~[~C~O____~L__~I____RGB~@~Z~A~S~@~B
-            cam_name (str): ~[~\~P~M__~L~O~@~I~@__'cam_front_right'~@~B
-            bev_img (np.ndarray, optional): ~_~^~[~@~B~X____None~@~B
+            bev_coords (np.ndarray): BEV坐标点(N, 2)形状，N个点的x坐标和y坐标
+            img_coords (np.ndarray): BEV对应图像坐标点(N, 2)形状，N个点的u坐标和v坐标
+            rgb_img (np.ndarray): 对应图像RGB通道(height, width, 3)形状，height为高，width为宽，3为RGB通道
+            cam_name (str): 相机名称如'cam_front_right'
+            bev_img (np.ndarray, optional): 输出图像。如果为None
 
         Returns:
-            np.ndarray: ~_~^~[~L__~J__(height, width, 3)~L~E__height__~_~^~[~X__~Lwidth__~_~^~[____~L__~I____RGB~@~Z~A~S~@~B
+            np.ndarray: 输出图像(height, width, 3)形状，height为输出图像高，width为输出图像宽，3为RGB通道
         """
 
         if bev_img is None:
             bev_img = np.zeros((self.height, self.width, 4), dtype=np.uint8)
-        # ~I~T~Y~E~G~L~C~[~Z~D~B
+        # 边界条件判断
         cond = (bev_coords[:, 0] >= self.min_x) & (bev_coords[:, 0] <= self.max_x) & (
                 bev_coords[:, 1] >= self.min_y) & (
                        bev_coords[:, 1] <= self.max_y)
         bev_coords = bev_coords[cond]
         img_coords = img_coords[cond]
-        # ~I~T~Y~I~M~F__~A~L~Z~D~L~_~_
+        # 特殊处理前右相机
         if cam_name == 'cam_front_right':
             cond = img_coords[:, 1] <= 1620
             bev_coords = bev_coords[cond]
             img_coords = img_coords[cond]
-        # bev~]~P| ~G~B____bev_img~C~O| ~]~P| ~G
+        # 将BEV坐标转为像素坐标
         pixel_coords = bev_coords.copy()
         pixel_coords[:, 0] = (bev_coords[:, 0] - self.min_x) / self.res
         pixel_coords[:, 1] = (self.max_y - bev_coords[:, 1]) / self.res
-        # ~I~T~Y~G~M~M~B~L~]~U~Y__~@__~B~L~E~Y~B__~U~L~X__~G~M~M~X~H~F~[~V~C~O| ~B
+        # 去除重复坐标点
         pixel_coords, idxs = np.unique(pixel_coords.round(), return_index=True, axis=0)
         pixel_coords = pixel_coords.astype(int)
         img_coords = img_coords[idxs]
-        # __bev_img~K~Jrbg~@
+        # 更新BEV图像的RGB值
         for i in range(img_coords.shape[0]):
             bev_img[pixel_coords[i][1], pixel_coords[i][0], :3] = rgb_img[img_coords[i][1], img_coords[i][0]]
             bev_img[pixel_coords[i][1], pixel_coords[i][0], 3] = 255
-        # __~T__~]~Mbev ~Z~D~C~O| ~B~\img __~O~Vrgb ~@
+        # 投影BEV到图像的RGB通道
         # bev_coords2= np.mgrid[0:bev_img.shape[0], 0:bev_img.shape[1]]
         # bev_coords2 = np.dstack(bev_coords2).reshape(-1, 2)
         # bx, by = self.pixel_to_bev(bev_coords2[:,0], bev_coords2[:,1])
@@ -296,21 +274,21 @@ class BevProjector:
             bev_img = np.zeros((self.height, self.width, 3))
         if bev_coords.shape[0] == 0:
             return bev_img
-        # ~I~T~Y~E~G~L~C~[~Z~D~B
+        # 边界条件判断
         cond = (bev_coords[:, 0] >= self.min_x) & (bev_coords[:, 0] <= self.max_x) & (
                 bev_coords[:, 1] >= self.min_y) & (
                        bev_coords[:, 1] <= self.max_y)
         bev_coords = bev_coords[cond]
         if bev_coords.shape[0] == 0:
             return bev_img
-        # bev~]~P| ~G~B____bev_img~C~O| ~]~P| ~G
+        # BEV坐标转像素坐标
         pixel_coords = bev_coords.copy()
         pixel_coords[:, 0] = (bev_coords[:, 0] - self.min_x) / self.res
         pixel_coords[:, 1] = (self.max_y - bev_coords[:, 1]) / self.res
-        # ~I~T~Y~G~M~M~B~L~]~U~Y__~@__~B~L~E~Y~B__~U~L~X__~G~M~M~X~H~F~[~V~C~O| ~B
+        # 去除重复坐标点
         pixel_coords, idxs = np.unique(pixel_coords.round(), return_index=True, axis=0)
         pixel_coords = pixel_coords.astype(int)
-        # __bev_img~K~Jrbg~@
+        # 更新BEV图像
         beta = 1 - alpha
         for i in range(pixel_coords.shape[0]):
             bev_img[pixel_coords[i][1], pixel_coords[i][0], :3] = alpha * color + beta * bev_img[pixel_coords[i][1],
@@ -368,7 +346,7 @@ def project_imgs_to_bev(projector: BevProjector, multi_group: List[Tuple[int, Li
             coor = get_txt_coor(name, bev_img, cx_ratio, cy_ratio)
             cv2.putText(bev_img, f'{name.strip("cam_")}', coor, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255, 255), 2)
             diff_coor = np.array(coor)+ np.array([0, 30])
-            cv2.putText(bev_img, f'{int(grp_time_diff[ix] // 1E6)} ms', diff_coor, cv2.FONT_HERSHEY_SIMPLEX, 0.6,
+            cv2.putText(bev_img, f'{int(grp_time_diff[ix] // 1E6)} ms', diff_coor, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 
                         (0, 0, 255, 255), 2)
         img_path = f'{out_path}_{i + 1}_{frm_num}.png'
         cv2.imwrite(img_path, bev_img)
@@ -426,13 +404,13 @@ def gen_bev(car_yaml, multi_group, proj_type, output_dir):
     #     lines = f.readlines()
     # img_name_dict = {}
     # aligner = ImagesTimeAligner(bag_dir)
-    # # ~I~M~]~Z~D__
+    # # 获取前帧
     # frms = aligner.get_front_frames(cam_names_dict[proj_type])
     # multi_group = [frms]
-    # # __~W~Z~D__
+    # # 获取中间帧
     # frms = aligner.get_middle_frames(cam_names_dict[proj_type])
     # multi_group.append(frms)
-    # # ~P~N~]~Z~D__
+    # # 获取后帧
     # frms = aligner.get_back_frames(cam_names_dict[proj_type])
     # multi_group.append(frms)
 
