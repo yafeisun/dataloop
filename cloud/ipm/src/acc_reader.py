@@ -3,7 +3,6 @@ import os.path
 import numpy as np
 from src.utils import log
 
-
 class CanCsvReader:
     def __init__(self, can_path):
         ts_acc = {}

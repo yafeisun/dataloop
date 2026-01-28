@@ -45,4 +45,8 @@ class FrameAlignError(IPMException):
 
 
 class ParamShapeError(IPMException):
+<<<<<<< HEAD
     code = StateCode.error_shape_error
+=======
+    code = StateCode.error_shape_error
+>>>>>>> a849965d029b72b048ba92c01a702d045ebef069
