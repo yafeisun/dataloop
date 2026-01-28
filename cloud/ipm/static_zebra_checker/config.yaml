@@ -1,0 +1,72 @@
+# 静止片段和斑马线检测配置文件
+
+# 静止检测参数
+static_detection:
+  # 位移阈值（米），连续3帧累计位移小于此值认为静止
+  displacement_threshold: 0.01
+  # 最小静止持续时间（秒）
+  min_duration: 2.0
+  # 滑动窗口大小（帧数）
+  window_size: 3
+
+# 斑马线检测参数（Sobel + 行投影 + 峰值检测方法）
+zebra_detection:
+  # ROI区域比例 (x_start, x_end, y_start, y_end)
+  # 推荐值：x: 0.25-0.75（中间区域），y: 0.60-0.88（下方区域）
+  roi_ratio: [0.25, 0.75, 0.60, 0.88]
+  # 最少优质峰值数量（斑马线至少需要几条横线）
+  min_peaks: 4
+  # 最小平均间距（像素）- 斑马线白条之间的最小距离
+  min_spacing: 5
+  # 最大平均间距（像素）- 斑马线白条之间的最大距离
+  max_spacing: 120
+  # 最小覆盖率 - 首尾“优质峰值”跨度占 ROI 高度的比例
+  min_coverage: 0.05
+  # 最小水平跨度比例 - 优质峰值至少要跨越 ROI 宽度的比例
+  min_span: 0.6
+  # 最小水平分段占用率 - 10个分段中有多少个包含白色像素
+  min_occupancy: 0.5
+  # 最大水平连续性 - 白色像素占跨度的比例（防止由于阴影或停止线导致的误检）
+  max_continuity: 0.4
+  # 最小间距规律性比例 - 接近中位数的间距所占比例
+  min_regularity: 0.6
+  # 峰值阈值比例 - 相对于最大峰值的比例（用于过滤小峰）
+  peak_threshold_ratio: 0.3
+  # 最小峰值间隔（像素）- 避免噪声点被误判为峰，或同一个条纹检测到多个峰
+  min_peak_width: 5
+  # 是否输出调试信息
+  debug: true
+
+# 一致性检查参数
+consistency_check:
+  # 一致性阈值 - 检测到斑马线的帧数比例达到此值才认为有斑马线
+  consistency_threshold: 0.7
+  
+  # 采样策略配置（全检模式）
+  sampling:
+    # 小片段策略（帧数 <= small_frame_threshold）
+    small_frame_threshold: 5
+    small_frame_sample_all: true  # 小片段是否全部采样
+    
+    # 中等片段策略（small_frame_threshold < 帧数 <= medium_frame_threshold）
+    medium_frame_threshold: 30
+    medium_frame_sample_ratio: 1.0  # 采样比例（全检）
+    medium_frame_min_samples: 5      # 最小采样帧数
+    
+    # 大片段策略（帧数 > medium_frame_threshold）
+    large_frame_max_samples: 1000    # 最大采样帧数（全检模式设置为大值）
+    large_frame_sample_ratio: 1.0    # 采样比例（全检）
+
+# 输出路径配置
+output:
+  # 静止片段输出目录名称
+  static_periods_dir: "static_periods"
+  # 斑马线片段输出目录名称
+  zebra_periods_dir: "zebra_periods"
+
+# 相机配置
+camera:
+  # 相机文件夹名称
+  camera_dir: "cam_front_right"
+  # 图片格式
+  image_format: ".jpg"

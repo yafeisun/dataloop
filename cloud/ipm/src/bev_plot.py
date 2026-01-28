@@ -80,7 +80,9 @@ class BevPlot:
             return self.max_x * 2 / 3, self.max_y - 1
         else:
             print('cam_name error')
-            return None    def init_param(self, cam_param_path):
+            return None    
+    
+    def init_param(self, cam_param_path):
         self.cam_param = load_cam_param(cam_param_path, v6=False)
         for name in self.cam_names:
             dist = AntiDistortion(self.cam_param[name]['intrinsic'], self.cam_param[name]['distCoeff'],

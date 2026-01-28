@@ -91,7 +91,9 @@ class BevProjector:
                 self.trans_bev_to_img_(bev_coords, alpha=1.0, bev_img=bev_img, color=np.array(self.color_list[i]))
         # bev_img = self.draw_coor_sys(bev_img)
         bev_img = self.draw_grid(bev_img)
-        return bev_img    def run(self, img_list, cam_name_list, det_results):
+        return bev_img
+    
+    def run(self, img_list, cam_name_list, det_results):
         bev_img = np.zeros((self.height, self.width, 4), dtype=np.uint8)
         for img_path, cam_name in zip(img_list, cam_name_list):
             rgb_img = load_image(img_path)
@@ -233,18 +235,18 @@ class BevProjector:
 
 
     def trans_bev_to_img(self, bev_coords, img_coords, rgb_img, cam_name, bev_img=None):
-        """
-        ~Fbev~]~P| ~G__~M__~_~^~[~]~P| ~G~L__~X~HRGB~[~C~O~@~B
+        r"""
+        Transform BEV coordinates to image coordinates and map RGB values.
 
         Args:
-            bev_coords (np.ndarray): bev~B~Q~]~P| ~G~L__~J__(N, 2)~L~E__N__~B~Z~D~U~G~O~L__~@~H~W__x~]~P| ~G~L__~L~H~W__y~]~P| ~G~@~B
-            img_coords (np.ndarray): bev~B__~T~Z~D~[~C~O~]~P| ~G~L__~J__(N, 2)~L~E__N__~B~Z~D~U~G~O~L__~@~H~W__u~]~P| ~G~L__~L~H~W__v~]~P| ~G~@~B
-            rgb_img (np.ndarray): ~B__~T~Z~DRGB~[~C~O~L__~J__(height, width, 3)~L~E__height__~[~C~O~X__~Lwidth__~[~C~O____~L__~I____RGB~@~Z~A~S~@~B
-            cam_name (str): ~[~\~P~M__~L~O~@~I~@__'cam_front_right'~@~B
-            bev_img (np.ndarray, optional): ~_~^~[~@~B~X____None~@~B
+            bev_coords (np.ndarray): BEV coordinates, shape (N, 2), [x, y]
+            img_coords (np.ndarray): Image coordinates, shape (N, 2), [u, v]
+            rgb_img (np.ndarray): RGB image, shape (height, width, 3), RGB values
+            cam_name (str): Camera name, e.g., 'cam_front_right'
+            bev_img (np.ndarray, optional): Existing BEV image. Defaults to None.
 
         Returns:
-            np.ndarray: ~_~^~[~L__~J__(height, width, 3)~L~E__height__~_~^~[~X__~Lwidth__~_~^~[____~L__~I____RGB~@~Z~A~S~@~B
+            np.ndarray: BEV image, shape (height, width, 3), RGB values
         """
 
         if bev_img is None:
