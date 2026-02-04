@@ -1,0 +1,477 @@
+sensors:
+  lidar:
+    - topic: /middle/rslidar_packets_unique
+      lidar_type: RSP128
+      split_angle: 0
+      is_scans_packet: true
+      is_base: true
+      calibration:
+        frame: lidar_tm_ruby_plus
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        z: 1.916833
+        x: 1.06
+        roll: -0.0209799986332655
+        pitch: -0.001144999888545904
+        yaw: -1.556573033332825
+        y: 0
+    - topic: /left/rslidar_packets_unique
+      lidar_type: RSBPV4
+      is_scans_packet: true
+      calibration:
+        frame: lidar_fm_bp
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        yaw: -0.02365025132894516
+        pitch: 0.02520859766204506
+        roll: -1.569270610809326
+        z: 1.633393406867981
+        y: 0.6945157647132874
+        x: 1.131170511245728
+    - topic: /right/rslidar_packets_unique
+      lidar_type: RSBPV4
+      is_scans_packet: true
+      calibration:
+        frame: lidar_lm_bp
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        roll: 1.562368
+        y: -0.695671
+        pitch: 0.016002
+        z: 1.636821
+        yaw: -0.023682
+        x: 1.12288
+    - topic: /front/rslidar_packets_unique
+      lidar_type: RSBPV4
+      is_scans_packet: true
+      calibration:
+        frame: lidar_fm_bp
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        yaw: 0.4055445194244385
+        pitch: -1.559713781844366
+        roll: 2.736483097076416
+        z: 0.5171809196472168
+        y: -0.002710590837523341
+        x: 3.713720321655273
+    - topic: /back/rslidar_packets_unique
+      lidar_type: RSBPV4
+      is_scans_packet: true
+      calibration:
+        frame: lidar_lm_bp
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        roll: 3.106602191925049
+        y: -0.01065957546234131
+        pitch: -1.537498491058942
+        z: 0.5105358958244324
+        yaw: -3.106813430786133
+        x: -1.013308644294739
+  camera:
+    - topic: /cam_front_left/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        colormap_direction: back
+        frame: cam_back_group
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 1.950700044631958
+          y: -0.03299999982118607
+          z: 1.359099984169006
+          roll: 1.580899953842163
+          pitch: 3.139100074768066
+          yaw: 1.586699962615967
+        CameraIntMat:
+          - 7318.66175208574
+          - 0.0
+          - 1916.08998825382
+          - 0.0
+          - 7315.99436264838
+          - 1067.71287086326
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - 0.13474193579602
+          - -1.08139102574899
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 3840
+          - 2160
+      time_compensation: 0.005
+      time_compensation_checked: false
+    - topic: /cam_front_right/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        frame: cam_side_left_back_group
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 1.924999952316284
+          y: -0.01009999960660934
+          z: 1.370700001716614
+          roll: 1.583400011062622
+          pitch: 3.141000032424927
+          yaw: 1.585500001907349
+        CameraIntMat:
+          - 1905.54275258785
+          - 0.0
+          - 1911.03565800562
+          - 0.0
+          - 1905.78167238098
+          - 1075.70035021964
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.0303446052583624
+          - -0.00379637466601315
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: -0.005
+      time_compensation_checked: false
+    - topic: /cam_back/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        frame: right_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: -0.04019999876618385
+          y: 0.006800000090152025
+          z: 1.442399978637695
+          roll: -1.600499987602234
+          pitch: 0.01240000035613775
+          yaw: 1.590199947357178
+        CameraIntMat:
+          - 1053.41
+          - 0.0
+          - 959.989
+          - 0.0
+          - 1053.06
+          - 642.744
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.0197022
+          - 0.00787167
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: -0.01
+      time_compensation_checked: false
+    - topic: /cam_side_left_back/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        colormap_direction: left
+        frame: cam_side_left_front_group
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 2.44320011138916
+          y: 0.9690999984741211
+          z: 0.801800012588501
+          roll: -1.565299987792969
+          pitch: -0.002199999988079071
+          yaw: 0.7720999717712402
+        CameraIntMat:
+          - 1051.88
+          - 0.0
+          - 963.247
+          - 0.0
+          - 1051.72
+          - 641.705
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.0198515
+          - 0.00786473
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: 0
+      time_compensation_checked: false
+    - topic: /cam_side_left_front/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        frame: cam_side_right_back_group
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 2.543200016021729
+          y: 0.945900022983551
+          z: 0.8158000111579895
+          roll: 1.562600016593933
+          pitch: -3.155400037765503
+          yaw: 2.371500015258789
+        CameraIntMat:
+          - 1053.63
+          - 0.0
+          - 961.986
+          - 0.0
+          - 1053.4
+          - 636.56
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.0201786
+          - 0.00827548
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: -0.003
+      time_compensation_checked: false
+    - topic: /cam_side_right_back/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        colormap_direction: right
+        frame: cam_side_right_front_group
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 2.442100048065186
+          y: -0.9398000240325928
+          z: 0.8183000087738037
+          roll: -1.556599974632263
+          pitch: 0.005100000184029341
+          yaw: 2.368200063705444
+        CameraIntMat:
+          - 1053.32
+          - 0.0
+          - 960.547
+          - 0.0
+          - 1053.09
+          - 641.977
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.019931
+          - 0.00805179
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: -0.003
+      time_compensation_checked: false
+    - topic: /cam_side_right_front/compressed
+      parse: false
+      CameraModel: fisheye
+      calibration:
+        colormap_direction: front
+        frame: back_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 2.563800096511841
+          y: -0.9559999704360962
+          z: 0.8119000196456909
+          roll: 1.594900012016296
+          pitch: 3.137500047683716
+          yaw: 0.7750999927520752
+        CameraIntMat:
+          - 1054.12
+          - 0.0
+          - 961.918
+          - 0.0
+          - 1053.65
+          - 631.462
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - -0.0198658
+          - 0.00757028
+          - 0.0
+          - 0.0
+        ImageSize:
+          - 1920
+          - 1280
+      time_compensation: 0
+      time_compensation_checked: false
+    - topic: /cam_around_front/compressed
+      parse: false
+      CameraModel: fisheye
+      lane_detection_used: false
+      calibration:
+        frame: front_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 3.79229998588562
+          y: -0.001000000047497451
+          z: 0.6226000189781189
+          roll: 1.191400051116943
+          pitch: -3.129300117492676
+          yaw: 1.573500037193298
+        CameraIntMat:
+          - 448.189
+          - 0.0
+          - 959.144
+          - 0.0
+          - 448.387
+          - 763.634
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - 0.146879
+          - -0.0688334
+          - 0.0210271
+          - -0.0026672
+        ImageSize:
+          - 1920
+          - 1536
+      time_compensation: -0.01
+      time_compensation_checked: false
+    - topic: /cam_around_back/compressed
+      parse: false
+      CameraModel: fisheye
+      lane_detection_used: false
+      calibration:
+        frame: front_800_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: -1.06879997253418
+          y: 0.03209999948740005
+          z: 0.9205999970436096
+          roll: -2.035099983215332
+          pitch: -0.01099999994039536
+          yaw: 1.585399985313416
+        CameraIntMat:
+          - 448.113
+          - 0.0
+          - 956.251
+          - 0.0
+          - 448.017
+          - 765.527
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - 0.14746
+          - -0.069862
+          - 0.0216508
+          - -0.00279263
+        ImageSize:
+          - 1920
+          - 1536
+      time_compensation: -0.02
+      time_compensation_checked: false
+    - topic: /cam_around_left/compressed
+      parse: false
+      CameraModel: fisheye
+      lane_detection_used: false
+      calibration:
+        frame: back_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 1.971300005912781
+          y: 1.057399988174438
+          z: 1.037500023841858
+          roll: 0.8148000240325928
+          pitch: -3.144299983978271
+          yaw: 3.142199993133545
+        CameraIntMat:
+          - 446.438
+          - 0.0
+          - 958.929
+          - 0.0
+          - 446.232
+          - 768.397
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - 0.150764
+          - -0.0713514
+          - 0.0216202
+          - -0.00261143
+        ImageSize:
+          - 1920
+          - 1536
+      time_compensation: -0.01
+      time_compensation_checked: false
+    - topic: /cam_around_right/compressed
+      parse: false
+      CameraModel: fisheye
+      lane_detection_used: false
+      calibration:
+        frame: left_camera
+        base_link: vehicle
+        euler_convention: R=Rz*Ry*Rx
+        type: original
+        CameraExt:
+          x: 1.973299980163574
+          y: -1.058300018310547
+          z: 1.047700047492981
+          roll: 0.843500018119812
+          pitch: -3.134099960327148
+          yaw: 0.006899999920278788
+        CameraIntMat:
+          - 450.074
+          - 0.0
+          - 959.605
+          - 0.0
+          - 449.933
+          - 767.138
+          - 0.0
+          - 0.0
+          - 1.0
+        DistCoeff:
+          - 0.146894
+          - -0.0694922
+          - 0.0214098
+          - -0.00271355
+        ImageSize:
+          - 1920
+          - 1536
+      time_compensation: -0.005
+      time_compensation_checked: false
+  rtk:
+    imu_topic: /rs/imu
+    odom_topic: /rs/odom
+    gps_topic: /rs/gps
+    calibration:
+      frame: rtk
+      base_link: vehicle
+      euler_convention: R=Rz*Ry*Rx
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
